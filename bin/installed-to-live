@@ -148,6 +148,7 @@ main() {
                 add) do_add     $CONF_FILE $WORK_DIR           ;;
               add=*) do_add     $CONF_FILE $WORK_DIR ${cmd#*=} ;;
             general) do_general $CONF_FILE                     ;;
+             passwd) do_passwd  $CONF_FILE                     ;;
             cleanup) do_cleanup $CONF_FILE $WORK_DIR           ;;
                   *) fatal "Unexpected command: $cmd.  Expected start, add=dir, general, or cleanup"
         esac
@@ -180,13 +181,23 @@ do_add() {
     write_conf_file $CONF_FILE
 }
 
+do_passwd() {
+    local conf_file=$1
+    read_conf_file $conf_file
+
+    munge_files         "$TEMPLATE_DIR"   "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
+
+    write_conf_file $CONF_FILE
+}
+
+
 do_general() {
     local conf_file=$1
     read_conf_file $conf_file
 
     bind_mount_template "$TEMPLATE_DIR"   "$BIND_ROOT" "$REAL_ROOT"
     bind_empty_dirs     "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" $EMPTY_DIRS
-    munge_files         "$TEMPLATE_DIR"   "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
+    #munge_files         "$TEMPLATE_DIR"   "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
 
     write_conf_file $CONF_FILE
 }
