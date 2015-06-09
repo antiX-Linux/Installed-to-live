@@ -58,7 +58,7 @@ Options:
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
     -e --empty=<dir1,dir2,...> Directories that will be bind mounted to empty directories
     -f --from=<dir>            Directory we copy from.  Default: $REAL_ROOT
-    -F --force                 Delete work directory when starting
+    -F --Force                 Delete work directory when starting
     -h --help                  Show this help
     -P --pretend               Don't do anything just show what would be done
     -r --root=<user:password>  The root user and optional password
@@ -121,7 +121,7 @@ main() {
               -empty=*|e=*) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
                -from=*|f=*) REAL_ROOT=$val                    ;;
                    -from|f) REAL_ROOT=$val                    ;;
-                  -force|F) FORCE=true                        ;;
+                  -Force|F) FORCE=true                        ;;
                    -help|h) usage                             ;;
                 -pretend|p) PRETEND=true                      ;;
                   -quiet|q) QUIET=true                        ;;
