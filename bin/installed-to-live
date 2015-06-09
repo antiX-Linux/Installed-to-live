@@ -161,7 +161,14 @@ do_start() {
     [ -z "$FORCE" -a -e "$work_dir" ] && fatal "Work dir $work_dir exists.  Use --force to delete it"
     test -e $work_dir && rm -rf $work_dir
 
-    mount --bind $REAL_ROOT $BIND_ROOT
+    mkdir -p $BIND_ROOT
+    if mountpoint -q $BIND_ROOT &>/dev/null; then
+
+        [ -z "$FORCE" ] && fatal "bind-root: $BIND_ROOT is already a mount point"
+
+    else
+        mount --bind $REAL_ROOT $BIND_ROOT
+    fi
 
     write_conf_file $conf_file
 }
