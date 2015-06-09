@@ -380,23 +380,26 @@ munge_files() {
     # Bind mount files under $bind_from/
     for file in $BIND_FILES; do
         test -e $bind_root$file || continue
-        mount --bind $bind_from$file $bind_root$file
+        pretend mount --bind $bind_from$file $bind_root$file
     done
 }
 
 do_sed() {
     local file=$1
     shift
-    test -e $file || return
     echo sed $* $file
     if [ "$PRETEND" ]; then
         local expr
+        file=${file/$bind_from/$real_root}
+        test -e $file || return
         for expr; do
             [ "$expr" = -e ] && continue
+            echo sed -n -r "${expr}" $file
             sed -n -r "${expr}p" $file
         done
     else
-        sed -i -r "$@" $file
+        test -e $file || return
+        pretend sed -i -r "$@" $file
     fi
 }
 
