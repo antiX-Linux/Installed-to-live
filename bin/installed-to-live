@@ -151,7 +151,7 @@ main() {
             general) do_general $CONF_FILE                     ;;
              passwd) do_passwd  $CONF_FILE                     ;;
             cleanup) do_cleanup $CONF_FILE $WORK_DIR           ;;
-                  *) fatal "Unexpected command: $cmd.  Expected start, add=dir, general, or cleanup"
+                  *) fatal "Unexpected command: $cmd.  Expected start, add=dir, general, passwd, or cleanup"
         esac
     done
 }
