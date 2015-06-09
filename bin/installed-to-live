@@ -137,7 +137,7 @@ main() {
         esac
     done
 
-    CONF_FILE=$WORK_DIR/undo.conf
+    CONF_FILE=$WORK_DIR/cleanup.conf
 
     [ $# -eq 0 ] && fatal "Expected as least one commmand"
 
