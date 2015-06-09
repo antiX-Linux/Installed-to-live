@@ -265,12 +265,13 @@ bind_empty_dirs() {
 
     local base
     echo "$dirs" | tr ',' '\n' | tac | while read base; do
-        local targ=$bind_root$base
+        [ "$base" ] || continue
+        local targ=$bind_root/$base
         # If directory doesn't exist then skip it
         test -d $targ || continue
-        make_dir "$targ" "$real_root$base"
-        pretend mkdir -p $template_dir$base
-        pretend mount --bind $template_dir$base $targ
+        make_dir "$targ" "$real_root/$base"
+        pretend mkdir -p $template_dir/$base
+        pretend mount --bind $template_diri/$base $targ
     done
 }
 
