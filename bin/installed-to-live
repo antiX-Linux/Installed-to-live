@@ -241,8 +241,9 @@ do_cleanup() {
 bind_mount_template() {
     local template_dir=$1  bind_root=$2  real_root=$3
 
-    # Remove trailing slash from real_root
+    # Remove trailing slash from real_root and template_dir
     real_root=${real_root%/}
+    template_dir=${template_dir%/}
 
     test -d $template_dir || return
     local file
