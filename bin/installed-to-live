@@ -213,19 +213,28 @@ do_cleanup() {
     local conf_file=$1  work_dir=$2
     read_conf_file $conf_file
 
-    mountpoint $BIND_ROOT -q &>/dev/null && pretend umount --recursive $BIND_ROOT
+    local i
+    for i in $(seq 1 10); do
+        mountpoint $BIND_ROOT -q &>/dev/null || break
+        pretend umount --recursive $BIND_ROOT
+        [ "$PRETEND" ] && break
+    done
+
+    [ -z "$PRETEND" ] && mountpoint $BIND_ROOT -q &>/dev/null && fatal "Could not umount $BIND_DIR"
 
     local file dir
     echo "$RM_FILES" | tr ',' '\n' | tac | while read file; do
+	[ "$file" ] || continue
         pretend rm -f "$file"
     done
 
     echo "$RM_DIRS" | tr ',' '\n' | tac | while read dir; do
+	[ "$dir" ] || continue
         pretend rmdir --ignore-fail-on-non-empty --parents "$dir"
     done
 
-    #pretend rm -f $conf_file
-    #[ "$work_dir" ] && pretend rm -rf $work_dir
+    pretend rm -f $conf_file
+    [ "$work_dir" ] && pretend rm -rf $work_dir
     exit 0
 }
 
