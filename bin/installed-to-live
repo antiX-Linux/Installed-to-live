@@ -272,7 +272,7 @@ bind_empty_dirs() {
         test -d $targ || continue
         make_dir "$targ" "$real_root/$base"
         pretend mkdir -p $template_dir/$base
-        pretend mount --bind $template_diri/$base $targ
+        pretend mount --bind $template_dir/$base $targ
     done
 }
 
