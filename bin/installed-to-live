@@ -212,7 +212,7 @@ do_general() {
 
 do_cleanup() {
     local conf_file=$1  work_dir=$2
-    read_conf_file $conf_file
+    read_conf_file $conf_file $FORCE
 
     local i
     for i in $(seq 1 10); do
@@ -429,8 +429,13 @@ Conf_File
 }
 
 read_conf_file() {
-    local conf_file=$1
-    test -r $conf_file || fatal "Could not find config file $conf_file"
+    local conf_file=$1  force=$2
+
+    if ! test -r $conf_file; then
+        [ "$force" ] || fatal "Could not find config file $conf_file"
+        return
+    fi
+
     . $conf_file
 }
 
