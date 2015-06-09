@@ -356,13 +356,13 @@ munge_files() {
         | grep -v "^$user_1000$")
 
     local other_user_regex=$(echo $other_users | tr " " '|')
-    sed -i -r "/^($other_user_regex):/d" $pw_files
-    sed -i -r -e "s/:($other_user_regex)(,|$)/:/" -e "s/,($other_user_regex)(,|$)/\2/" $grp_files
+    pretend sed -i -r "/^($other_user_regex):/d" $pw_files
+    pretend sed -i -r -e "s/:($other_user_regex)(,|$)/:/" -e "s/,($other_user_regex)(,|$)/\2/" $grp_files
 
     # Replace user_1000 with def_user (demo) if needed
     if [ $user_1000 != $def_user ]; then
-        sed -i -r "s/^$user_1000:/$def_user:/" $pw_files
-        sed -i -r -e "s/:$user_1000(,|$)/:$def_user/" -e "s/,$user_1000(,|$)/,$def_user\1/" $grp_files
+        pretend sed -i -r "s/^$user_1000:/$def_user:/" $pw_files
+        pretend sed -i -r -e "s/:$user_1000(,|$)/:$def_user/" -e "s/,$user_1000(,|$)/,$def_user\1/" $grp_files
     fi
 
     do_sed $bind_from/etc/slim.conf \
