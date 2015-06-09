@@ -114,8 +114,8 @@ main() {
         esac
 
         case $param in
-                -dir=*|d=*) BIND_ROOT=$val                    ;;
-                    -dir|d) BIND_ROOT=$val                    ;;
+          -bind-root=*|b=*) BIND_ROOT=$val                    ;;
+              -bind-root|b) BIND_ROOT=$val                    ;;
                   -empty|e) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
               -empty=*|e=*) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
                -from=*|f=*) REAL_ROOT=$val                    ;;
