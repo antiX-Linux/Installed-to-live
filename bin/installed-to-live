@@ -49,6 +49,7 @@ This is needed because sometimes we create directories and touch files.
 Commands:
     start      Do the main bind mount and create cleanup.conf
     general    Make it general purpose
+    passwd     Only make general purpose password/group files
     add=<dir>  Add files from the <dir> template
     cleanup    Clean up all that we did
 
