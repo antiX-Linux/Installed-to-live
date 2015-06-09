@@ -159,7 +159,7 @@ main() {
 do_start() {
     local conf_file=$1  work_dir=$2
 
-    [ -z "$FORCE" -a -e "$work_dir" ] && fatal "Work dir $work_dir exists.  Use --force to delete it"
+    [ -z "$FORCE" -a -e "$work_dir" ] && fatal "Work dir $work_dir exists.  Use --Force to delete it"
     test -e $work_dir && rm -rf $work_dir
 
     mkdir -p $BIND_ROOT
