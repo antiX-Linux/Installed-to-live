@@ -1,7 +1,7 @@
 #!/bin/bash
-# 
+#
 # Start:
-# 1) Bind mount the bind-root 
+# 1) Bind mount the bind-root
 #
 # General
 # 2) do a bunch of bind mounts under bind-root
@@ -48,12 +48,12 @@ This is needed because sometimes we create directories and touch files.
 
 Commands:
     start      Do the main bind mount and create cleanup.conf
-    general    Make it general purpose 
+    general    Make it general purpose
     add=<dir>  Add files from the <dir> template
     cleanup    Clean up all that we did
 
 Options:
-   
+
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
     -e --empty=<dir1,dir2,...> Directories that will be bind mounted to empty directories
     -f --from=<dir>            Directory we copy from.  Default: $REAL_ROOT
@@ -75,7 +75,7 @@ Current defaults:
      --from=$REAL_ROOT
  --template=$TEMPLATE_DIR
 
-     --user=$USER_PW     
+     --user=$USER_PW
      --root=$ROOT_PW
 Usage
 
@@ -102,7 +102,7 @@ main() {
         esac
 
         case $param in
-            -bind-root|-empty|-from|-root|-template|-user|-work|[befrtuw]) 
+            -bind-root|-empty|-from|-root|-template|-user|-work|[befrtuw])
                     [ $# -lt 1 ] && fatal "Expected a parameter after: -$param"
                     val=$1
                     [ -n "$val" -a -z "${val##-*}" ] \
@@ -261,7 +261,7 @@ touch_file() {
     test -e $file && fatal "Expected a plain file at $orig"
 
     RM_FILES="$RM_FILES${RM_FILES:+,}$orig"
- 
+
     pretend touch $file
 }
 
