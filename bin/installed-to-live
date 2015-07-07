@@ -26,6 +26,8 @@ BIND_ROOT=/bind-root
 REAL_ROOT=/
 WORK_DIR=/tmp/$ME
 
+EXCLUDE_DIR=/usr/local/share/excludes
+
 CONF_FILE=$WORK_DIR/cleanup.conf
 
 TEMPLATE_DIR=/usr/local/share/live-files
@@ -54,9 +56,14 @@ Commands:
     add=<dir>  Add files from the <dir> template
     cleanup    Clean up all that we did
 
+    exclude[=<prefix>] file1 file2 ...
+               Generate an exclude list from the files listed. Prepend each
+               entry with <prefix> if it is given.
+
 Options:
 
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
+    -d --dir=<dir>             Directory for exclude files  Default: $EXCLUDE_DIR
     -e --empty=<dir1,dir2,...> Directories that will be bind mounted to empty directories
     -f --from=<dir>            Directory we copy from.  Default: $REAL_ROOT
     -F --Force                 Delete work directory when starting
@@ -89,7 +96,7 @@ main() {
     [ $# -eq 0 ] && usage
 
     local param val
-    local short_stack="befFhprtuvq"
+    local short_stack="bdefFhprtuvq"
     while [ $# -gt 0 -a -n "$1" -a -z "${1##-*}" ]; do
         param=${1#-}
         shift
@@ -104,7 +111,7 @@ main() {
         esac
 
         case $param in
-            -bind-root|-empty|-from|-root|-template|-user|-work|[befrtuw])
+            -bind-root|-dir|-empty|-from|-root|-template|-user|-work|[bdefrtuw])
                     [ $# -lt 1 ] && fatal "Expected a parameter after: -$param"
                     val=$1
                     [ -n "$val" -a -z "${val##-*}" ] \
@@ -118,6 +125,8 @@ main() {
         case $param in
           -bind-root=*|b=*) BIND_ROOT=$val                    ;;
               -bind-root|b) BIND_ROOT=$val                    ;;
+                -dir=*|d=*) EXCLUDE_DIR=$val                  ;;
+                    -dir|d) EXCLUDE_DIR=$val                  ;;
                   -empty|e) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
               -empty=*|e=*) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
                -from=*|f=*) REAL_ROOT=$val                    ;;
@@ -143,8 +152,10 @@ main() {
 
     [ $# -eq 0 ] && fatal "Expected as least one commmand"
 
-    local cmd
-    for cmd; do
+    while [ $# -gt 0 ]; do
+    local val cmd=$1
+    shift
+    val=${cmd#*=}
         case $cmd in
               start) do_start   $CONF_FILE $WORK_DIR           ;;
              status) do_status  $CONF_FILE                     ;;
@@ -153,9 +164,40 @@ main() {
             general) do_general $CONF_FILE                     ;;
              passwd) do_passwd  $CONF_FILE                     ;;
             cleanup) do_cleanup $CONF_FILE $WORK_DIR           ;;
+          exclude=*) do_exclude "$val" "$@" ; exit 0           ;;
+            exclude) do_exclude "" "$@" ; exit 0               ;;
                   *) fatal "Unexpected command: $cmd.\nExpected: start, status, add, add=dir, general, passwd, or cleanup"
         esac
     done
+}
+
+do_exclude() {
+    local file ecnt=0 prefix=$1
+    shift
+
+    for file; do
+        [ -z "${file##/*}" -o -z "${file##.*}" ] || file="$EXCLUDE_DIR/$file"
+        #echo "file: $file"
+        if ! test -f $file; then
+            error "Exclude file $file does not exist"
+            ecnt=$((ecnt + 1))
+            continue
+        fi
+
+        for line in $(grep -v "^\s*#" $file | sed -r -e "s=^\s*/?==" -e 's/\s+#.*//'); do
+            echo "$prefix$line"
+        done
+
+    done  | sort -u
+
+    case $ecnt in
+        0) exit 0;;
+        1) fatal "One missing exclude file" ;;
+        *) fatal "$ecnt missing exclude files" ;;
+    esac
+
+    exit 2
+
 }
 
 do_start() {
