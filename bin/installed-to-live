@@ -27,6 +27,7 @@ REAL_ROOT=/
 WORK_DIR=/tmp/$ME
 
 EXCLUDE_DIR=/usr/local/share/excludes
+VERSION_FILE=/etc/live/version/linuxfs.ver
 
 CONF_FILE=$WORK_DIR/cleanup.conf
 
@@ -60,6 +61,9 @@ Commands:
                Generate an exclude list from the files listed. Prepend each
                entry with <prefix> if it is given.
 
+    version-file[=<title>]
+               Create a standard linuxfs.ver file and bind mount it at the
+               appropriate location: $VERSION_FILE
 Options:
 
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
@@ -157,18 +161,41 @@ main() {
     shift
     val=${cmd#*=}
         case $cmd in
-              start) do_start   $CONF_FILE $WORK_DIR           ;;
-             status) do_status  $CONF_FILE                     ;;
-                add) do_add     $CONF_FILE $WORK_DIR           ;;
-              add=*) do_add     $CONF_FILE $WORK_DIR ${cmd#*=} ;;
-            general) do_general $CONF_FILE                     ;;
-             passwd) do_passwd  $CONF_FILE                     ;;
-            cleanup) do_cleanup $CONF_FILE $WORK_DIR           ;;
-          exclude=*) do_exclude "$val" "$@" ; exit 0           ;;
-            exclude) do_exclude "" "$@" ; exit 0               ;;
-                  *) fatal "Unexpected command: $cmd.\nExpected: start, status, add, add=dir, general, passwd, or cleanup"
+              start) do_start         $CONF_FILE $WORK_DIR             ;;
+             status) do_status        $CONF_FILE                       ;;
+                add) do_add           $CONF_FILE $WORK_DIR             ;;
+              add=*) do_add           $CONF_FILE $WORK_DIR ${cmd#*=}   ;;
+            general) do_general       $CONF_FILE                       ;;
+             passwd) do_passwd        $CONF_FILE                       ;;
+            cleanup) do_cleanup       $CONF_FILE $WORK_DIR             ;;
+       version-file) do_version_file  $CONF_FILE $WORK_DIR             ;;
+     version-file=*) do_version_file  $CONF_FILE $WORK_DIR "$val"      ;;
+          exclude=*) do_exclude       "$val" "$@" ; exit 0             ;;
+            exclude) do_exclude       ""     "$@" ; exit 0             ;;
+                  *) fatal "Unexpected command: $cmd."
         esac
     done
+}
+
+do_version_file() {
+    local conf_file=$1  work_dir=$2  title=$3
+    read_conf_file $conf_file
+    local vdir=$work_dir/version-file
+    local vfile=$vdir$VERSION_FILE
+
+    mkdir -p $(dirname $vfile) || fatal "Could not make directory for version-file"
+    test -e $VERSION_FILE && cp $VERSION_FILE $vfile
+    cat >> $vfile << Version_Info
+$(version_id)
+
+title: $title
+creation date: $(date +"%e %B %Y %T %Z")
+kernel: $(uname -sr)
+machine: $(uname -m)
+Version_Info
+
+    bind_mount_template "$vdir" "$BIND_ROOT" "$REAL_ROOT"
+
 }
 
 do_exclude() {
@@ -517,6 +544,14 @@ read_conf_file() {
     . $conf_file
 
     return 0
+}
+
+random_hex_32() {
+    dd if=/dev/urandom bs=1 count=40 2>/dev/null | md5sum | cut -d" " -f1
+}
+
+version_id() {
+    echo "==== $(random_hex_32)"
 }
 
 fatal() {
