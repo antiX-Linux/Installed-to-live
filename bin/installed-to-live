@@ -26,7 +26,7 @@ BIND_ROOT=/bind-root
 REAL_ROOT=/
 WORK_DIR=/tmp/$ME
 
-EXCLUDE_DIR=/usr/local/share/excludes
+EXCLUDES_DIR=/usr/local/share/excludes
 VERSION_FILE=/etc/live/version/linuxfs.ver
 
 CONF_FILE=$WORK_DIR/cleanup.conf
@@ -70,8 +70,7 @@ Commands:
 Options:
 
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
-    -d --dir=<dir>             Directory for exclude files  Default: $EXCLUDE_DIR
-    -e --empty=<dir1,dir2,...> Directories that will be bind mounted to empty directories
+    -e --excludes-dir=<dir>    Directory for exclude files  Default: $EXCLUDES_DIR
     -f --from=<dir>            Directory we copy from.  Default: $REAL_ROOT
     -F --Force                 Delete work directory when starting
     -h --help                  Show this help
@@ -118,7 +117,7 @@ main() {
         esac
 
         case $param in
-            -bind-root|-dir|-empty|-from|-root|-template|-user|-work|[bdefrtuw])
+            -bind-root|-excludes-dir|-from|-root|-template|-user|-work|[befrtuw])
                     [ $# -lt 1 ] && fatal "Expected a parameter after: -$param"
                     val=$1
                     [ -n "$val" -a -z "${val##-*}" ] \
@@ -132,10 +131,8 @@ main() {
         case $param in
           -bind-root=*|b=*) BIND_ROOT=$val                    ;;
               -bind-root|b) BIND_ROOT=$val                    ;;
-                -dir=*|d=*) EXCLUDE_DIR=$val                  ;;
-                    -dir|d) EXCLUDE_DIR=$val                  ;;
-                  -empty|e) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
-              -empty=*|e=*) EMPTY_DIRS=${EMPTY_DIRS:+,}$val   ;;
+       -excludes-dir=*|e=*) EXCLUDES_DIR=$val                 ;;
+           -excludes-dir|e) EXCLUDES_DIR=$val                 ;;
                -from=*|f=*) REAL_ROOT=$val                    ;;
                    -from|f) REAL_ROOT=$val                    ;;
                   -Force|F) FORCE=true                        ;;
@@ -207,7 +204,7 @@ do_exclude() {
     shift
 
     for file; do
-        [ -z "${file##/*}" -o -z "${file##.*}" ] || file="$EXCLUDE_DIR/$file"
+        [ -z "${file##/*}" -o -z "${file##.*}" ] || file="$EXCLUDES_DIR/$file"
         #echo "file: $file"
         if ! test -f $file; then
             error "Exclude file $file does not exist"
@@ -258,8 +255,6 @@ do_add() {
         test -d $template_dir || fatal "Template dir: $template_dir is not a directory"
         bind_mount_template "$template_dir" "$BIND_ROOT" "$REAL_ROOT"
     fi
-
-    bind_empty_dirs "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" $EMPTY_DIRS
 
     write_conf_file $CONF_FILE
 
@@ -315,7 +310,7 @@ do_passwd() {
     local conf_file=$1
     read_conf_file $conf_file
 
-    munge_files         "$TEMPLATE_DIR"   "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
+    munge_files "$TEMPLATE_DIR" "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
 
     write_conf_file $CONF_FILE
 }
@@ -326,7 +321,7 @@ do_general() {
     read_conf_file $conf_file
 
     bind_mount_template "$TEMPLATE_DIR"   "$BIND_ROOT" "$REAL_ROOT"
-    bind_empty_dirs     "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" $EMPTY_DIRS
+    #bind_empty_dirs     "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" 
     #munge_files         "$TEMPLATE_DIR"   "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
 
     write_conf_file $CONF_FILE
