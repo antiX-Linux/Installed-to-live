@@ -246,14 +246,16 @@ do_start() {
 }
 
 do_add() {
-    local conf_file=$1  work_dir=$2  template_dir=$3
+    local conf_file=$1  work_dir=$2  dirs=$3
 
     read_conf_file $conf_file
 
-    if [ "$template_dir" ]; then
-        test -d $template_dir || fatal "Template dir: $template_dir is not a directory"
-        bind_mount_template "$template_dir" "$BIND_ROOT" "$REAL_ROOT"
-    fi
+    local dir
+    echo "$dirs" | tr ',' '\n' | while read dir; do
+	    [ "$dir" ] || continue
+        test -d $dir || fatal "Add dir: $dir is not a directory"
+        bind_mount_template "$dir" "$BIND_ROOT" "$REAL_ROOT"
+    done
 
     write_conf_file $CONF_FILE
 
