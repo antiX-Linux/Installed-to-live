@@ -266,11 +266,7 @@ do_empty() {
 
     read_conf_file $conf_file
 
-    local dir
-    echo "$dirs" | tr ',' '\n' | tac | while read dir; do
-	[ "$dir" ] || continue
-        bind_empty_dirs "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" "$dir"
-    done
+    bind_empty_dirs "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" "$dir"
 }
 
 do_status() {
