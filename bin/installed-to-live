@@ -318,7 +318,7 @@ do_general() {
     read_conf_file $conf_file
 
     bind_mount_template "$TEMPLATE_DIR"   "$BIND_ROOT" "$REAL_ROOT"
-    #bind_empty_dirs     "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" 
+    #bind_empty_dirs     "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT"
     #munge_files         "$TEMPLATE_DIR"   "$BIND_ROOT" "$WORK_DIR" "$USER_PW" "$ROOT_PW"
 
     write_conf_file $CONF_FILE
