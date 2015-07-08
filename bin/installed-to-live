@@ -163,8 +163,7 @@ main() {
         case $cmd in
               start) do_start         $CONF_FILE $WORK_DIR             ;;
              status) do_status        $CONF_FILE                       ;;
-                add) do_add           $CONF_FILE $WORK_DIR             ;;
-              add=*) do_add           $CONF_FILE $WORK_DIR ${cmd#*=}   ;;
+              add=*) do_add           $CONF_FILE $WORK_DIR "$val"      ;;
             general) do_general       $CONF_FILE                       ;;
              passwd) do_passwd        $CONF_FILE                       ;;
             cleanup) do_cleanup       $CONF_FILE $WORK_DIR             ;;
