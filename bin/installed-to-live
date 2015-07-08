@@ -50,23 +50,23 @@ Create a config file $CONF_FILE that can be used to undo what we did.
 This is needed because sometimes we create directories and touch files.
 
 Commands:
-    start      Do the main bind mount and create cleanup.conf
-    status     Show status including contents of cleanup.conf
-    general    Make it general purpose
-    passwd     Only make general purpose password/group files
-    add=<dir>  Add files from the <dir> template
-    cleanup    Clean up all that we did
+    start               Do the main bind mount and create cleanup.conf
+    status              Show status including contents of cleanup.conf
+    general             Make it general purpose
+    passwd              Only make general purpose password/group files
+    add=<dir1,dir2,..>  Add files from the dirs template
+    cleanup             Clean up all that we did
 
-    empty=<dir1,dir2,dir3>
-               Bind mount empty directories at these locations
+    empty=<dir1,dir2,...>
+                        Bind mount empty directories at these locations
 
     exclude[=<prefix>] file1 file2 ...
-               Generate an exclude list from the files listed. Prepend each
-               entry with <prefix> if it is given.
+                        Generate an exclude list from the files listed.
+                        Prepend each entry with <prefix> if it is given.
 
     version-file[=<title>]
-               Create a standard linuxfs.ver file and bind mount it at the
-               appropriate location: $VERSION_FILE
+                        Create a standard linuxfs.ver file and bind mount it
+                        at the appropriate location: $VERSION_FILE
 Options:
 
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
