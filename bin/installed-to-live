@@ -74,6 +74,7 @@ Options:
     -f --from=<dir>            Directory we copy from.  Default: $REAL_ROOT
     -F --Force                 Delete work directory when starting
     -h --help                  Show this help
+    -o --output=<file>         Send "exclude" command output to <file> instead of stdout
     -P --pretend               Don't do anything just show what would be done
     -r --root=<user:password>  The root user and optional password
     -t --template=<dir>        Template directory
@@ -102,7 +103,7 @@ main() {
     [ $# -eq 0 ] && usage
 
     local param val
-    local short_stack="bdefFhprtuvq"
+    local short_stack="bdefFhoprtuvq"
     while [ $# -gt 0 -a -n "$1" -a -z "${1##-*}" ]; do
         param=${1#-}
         shift
@@ -117,7 +118,7 @@ main() {
         esac
 
         case $param in
-            -bind-root|-excludes-dir|-from|-root|-template|-user|-work|[befrtuw])
+            -bind-root|-excludes-dir|-from|-output|-root|-template|-user|-work|[befortuw])
                     [ $# -lt 1 ] && fatal "Expected a parameter after: -$param"
                     val=$1
                     [ -n "$val" -a -z "${val##-*}" ] \
@@ -137,6 +138,8 @@ main() {
                    -from|f) REAL_ROOT=$val                    ;;
                   -Force|F) FORCE=true                        ;;
                    -help|h) usage                             ;;
+             -output=*|o=*) OUTPUT_FILE=$val                  ;;
+                 -output|o) OUTPUT_FILE=$val                  ;;
                 -pretend|p) PRETEND=true                      ;;
                   -quiet|q) QUIET=true                        ;;
                -root=*|r=*) ROOT_PW=$val                      ;;
@@ -201,6 +204,8 @@ Version_Info
 do_exclude() {
     local file ecnt=0 prefix=$1
     shift
+
+    [ "$OUTPUT_FILE" ] && exec > $OUTPUT_FILE
 
     for file; do
         [ -z "${file##/*}" -o -z "${file##.*}" ] || file="$EXCLUDES_DIR/$file"
