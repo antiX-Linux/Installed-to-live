@@ -228,8 +228,8 @@ do_populate_live() {
     [ $# -lt 1 ] && fatal "Missing <from> directory"
     local from_dir=$1  to_dir=$2
     test -d "$from_dir" || fatal "$from is not a directory"
-    copy_files "$from_dir" "$LIVE_FILE_LIST"         "$to_dir/$TEMPLATE_DIR/files"
-    copy_files "$from_dir" "$GENERAL_LIVE_FILE_LIST" "$to_dir/$TEMPLATE_DIR/general-files"
+    copy_files "$from_dir" "$LIVE_FILE_LIST"         "$to_dir$TEMPLATE_DIR/files"
+    copy_files "$from_dir" "$GENERAL_LIVE_FILE_LIST" "$to_dir$TEMPLATE_DIR/general-files"
 
     exit 0
 }
