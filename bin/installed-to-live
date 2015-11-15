@@ -100,9 +100,11 @@ Commands:
                         Create a standard linuxfs.ver file and bind mount it
                         at the appropriate location: $VERSION_FILE
 
-    populate-live-files=<from-dir>
+    populate-live-files <from-dir> [<to-dir>]
                         Populate the $TEMPLATE_DIR with files extracted from
                         <from-dir>.  This is usually a mounted linuxfs file.
+                        The optional <to-dir> is the top level directory
+                        under which we will put the template directory.
 Options:
 
     -b --bind-root=<dir>       The root of the new fs.   Default: $BIND_ROOT
@@ -215,7 +217,7 @@ main() {
           exclude=*) do_exclude       "$val" "$@" ; exit 0             ;;
             exclude) do_exclude       ""     "$@" ; exit 0             ;;
 
- populate-live-files=*) do_populate_live "$val"                        ;;
+ populate-live-files) do_populate_live "$@"                            ;;
 
                   *) fatal "Unexpected command: $cmd."
         esac
@@ -223,10 +225,13 @@ main() {
 }
 
 do_populate_live() {
-    local from_dir=$1
+    [ $# -lt 1 ] && fatal "Missing <from> directory"
+    local from_dir=$1  to_dir=$2
     test -d "$from_dir" || fatal "$from is not a directory"
-    copy_files "$from_dir" "$LIVE_FILE_LIST"         "$TEMPLATE_DIR/files"
-    copy_files "$from_dir" "$GENERAL_LIVE_FILE_LIST" "$TEMPLATE_DIR/general-files"
+    copy_files "$from_dir" "$LIVE_FILE_LIST"         "$to_dir/$TEMPLATE_DIR/files"
+    copy_files "$from_dir" "$GENERAL_LIVE_FILE_LIST" "$to_dir/$TEMPLATE_DIR/general-files"
+
+    exit 0
 }
 
 copy_files() {
