@@ -248,7 +248,7 @@ copy_files() {
         test -e $file || continue
         local dest_file=${file#$from_dir}
         local dest=$to_dir$dest_file
-        local dist_dir=$(dirname $dest)
+        local dest_dir=$(dirname $dest)
         test -d $dest_dir || pretend mkdir -p $dest_dir
         pretend cp -a $file $dest
     done
