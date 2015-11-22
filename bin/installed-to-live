@@ -344,7 +344,7 @@ do_empty() {
 
     read_conf_file $conf_file
 
-    bind_empty_dirs "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" "$dir"
+    bind_empty_dirs "$WORK_DIR/empty" "$BIND_ROOT" "$REAL_ROOT" "$dirs"
 }
 
 do_status() {
