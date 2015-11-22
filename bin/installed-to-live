@@ -645,7 +645,7 @@ set_password() {
     local pw=${user_pw#*:}
     : ${pw:=$user}
     local hash=$(mkpasswd -m sha-512 "$pw")
-    pretend sed -n -r "s=^($user):[^:]*:=\1:$hash=p" $dir/etc/shadow
+    pretend sed -i -r "s=^($user):[^:]*:=\1:$hash=" $dir/etc/shadow
 }
 
 write_conf_file() {
