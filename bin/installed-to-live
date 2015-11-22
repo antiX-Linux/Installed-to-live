@@ -312,7 +312,7 @@ do_start() {
     test -e $work_dir && rm -rf $work_dir
 
     mkdir -p $BIND_ROOT || fatal "Could not make bind root directory $BIND_ROOT"
-    if mountpoint -q $BIND_ROOT &>/dev/null; then
+    if is_mounted $BIND_ROOT &>/dev/null; then
 
         [ -z "$FORCE" ] && fatal "bind-root: $BIND_ROOT is already a mount point"
 
@@ -360,7 +360,7 @@ do_status() {
 
     if ! test -d $BIND_ROOT; then
         echo "  BIND_ROOT: $BIND_ROOT is not a directory"
-    elif mountpoint -q $BIND_ROOT; then
+    elif is_mounted $BIND_ROOT; then
         echo "  BIND_ROOT: $BIND_ROOT is mounted"
     else
         echo "  BIND_ROOT: $BIND_ROOT is not mounted"
@@ -438,12 +438,12 @@ do_cleanup() {
 
     local i
     for i in $(seq 1 10); do
-        mountpoint $BIND_ROOT -q &>/dev/null || break
+        is_mounted $BIND_ROOT &>/dev/null || break
         pretend umount --recursive $BIND_ROOT
         [ "$PRETEND" ] && break
     done
 
-    [ -z "$PRETEND" ] && mountpoint $BIND_ROOT -q &>/dev/null && fatal "Could not umount $BIND_DIR"
+    [ -z "$PRETEND" ] && is_mounted $BIND_ROOT &>/dev/null && fatal "Could not umount $BIND_DIR"
 
     pretend rmdir $BIND_ROOT
 
