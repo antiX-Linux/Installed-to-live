@@ -198,9 +198,9 @@ main() {
     [ $# -eq 0 ] && fatal "Expected as least one commmand"
 
     while [ $# -gt 0 ]; do
-    local val cmd=$1
-    shift
-    val=${cmd#*=}
+        local val cmd=$1
+        shift
+        val=${cmd#*=}
         case $cmd in
               start) do_start         $CONF_FILE $WORK_DIR             ;;
              status) do_status        $CONF_FILE                       ;;
