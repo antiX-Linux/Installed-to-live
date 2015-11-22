@@ -37,7 +37,7 @@ PRETEND=
 
 PW_FILES="/etc/passwd /etc/shadow /etc/gshadow /etc/group"
 MUNGE_FILES="/etc/slim.conf /etc/lightdm/lightdm.conf"
-BIND_FILES="$PW_FILES $MUNGE_FILES"
+BIND_FILES="$PW_FILES"
 
 LIVE_FILE_LIST="
 /etc/desktop-session/startup
