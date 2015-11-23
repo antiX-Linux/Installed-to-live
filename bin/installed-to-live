@@ -55,7 +55,9 @@ LIVE_FILE_LIST="
 /etc/skel/.fluxbox/menu
 /etc/skel/.icewm/menu
 /etc/skel/.jwm/menu
+/etc/skel/Desktop/Installer.desktop
 /etc/udev/rules.d/90-fstab-automount.rules
+/usr/share/applications/mx/minstall.desktop
 "
 
 GENERAL_LIVE_FILE_LIST="
