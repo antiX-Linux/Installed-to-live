@@ -329,10 +329,11 @@ do_add() {
 
     read_conf_file $conf_file
 
-    local dir
+    local dir real_dir real_root=${REAL_ROOT%/}
     echo "$dirs" | tr ',' '\n' | while read dir; do
 	    [ "$dir" ] || continue
-        test -d $dir || fatal "Add dir: $dir is not a directory"
+        real_dir=$real_root/${dir#/}
+        test -d $real_dir || fatal "Add dir: $real_dir is not a directory"
         bind_mount_template "$dir" "$BIND_ROOT" "$REAL_ROOT"
     done
 
