@@ -79,7 +79,6 @@ Commands:
 
     live-files          bind mount files under $TEMPLATE_DIR/files
     general-files       bind mount files under $TEMPLATE_DIR/general-files
-    all-files           same as "live-files general-files"
 
     passwd              Make general purpose password/group files
 
@@ -207,7 +206,6 @@ main() {
               add=*) do_add           $CONF_FILE $WORK_DIR "$val"      ;;
          live-files) do_live_files    $CONF_FILE $WORK_DIR             ;;
       general-files) do_general_files $CONF_FILE $WORK_DIR             ;;
-          all-files) do_all_files     $CONF_FILE $WORK_DIR             ;;
             general) do_general       $CONF_FILE $WORK_DIR             ;;
              passwd) do_passwd        $CONF_FILE                       ;;
             cleanup) do_cleanup       $CONF_FILE $WORK_DIR             ;;
@@ -409,7 +407,6 @@ _do_files() {
 
     write_conf_file $CONF_FILE
 }
-
 
 do_all_files() {
     do_live_files "$@"
