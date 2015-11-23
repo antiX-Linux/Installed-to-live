@@ -84,6 +84,8 @@ Commands:
 
     add=<dir1,dir2,..>  Add files from the dirs template
 
+    bind=<dir1,dir2,..>  Bind mount each dir IF it is a mountpoint
+
     general             Same as "all-files passwd"
 
     cleanup             Clean up all that we did
@@ -204,6 +206,7 @@ main() {
               start) do_start         $CONF_FILE $WORK_DIR             ;;
              status) do_status        $CONF_FILE                       ;;
               add=*) do_add           $CONF_FILE $WORK_DIR "$val"      ;;
+             bind=*) do_bind          $CONF_FILE $WORK_DIR "$val"      ;;
          live-files) do_live_files    $CONF_FILE $WORK_DIR             ;;
       general-files) do_general_files $CONF_FILE $WORK_DIR             ;;
             general) do_general       $CONF_FILE $WORK_DIR             ;;
@@ -335,6 +338,25 @@ do_add() {
 
     write_conf_file $CONF_FILE
 
+}
+
+do_bind() {
+    local conf_file=$1  work_dir=$2  dirs=$3
+
+    read_conf_file $conf_file
+
+    local dir real_dir real_root=${REAL_ROOT%/}
+    echo "$dirs" | tr ',' '\n' | while read dir; do
+        dir=${dir#/}
+	    [ "$dir" ] || continue
+
+        real_dir=$real_root/$dir
+
+        mountpoint -q $real_dir || continue
+        pretend mount --bind $real_dir $BIND_ROOT/$dir
+    done
+
+    write_conf_file $CONF_FILE
 }
 
 do_empty() {
