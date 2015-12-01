@@ -628,8 +628,10 @@ munge_files() {
     done
 }
 
+# Note: this code is no longer called/used.  We use fresh copies which
+# a lot of problems.  Although we will need to call it of the name of
+# the default user changes.
 do_xorg_login() {
-    #FIXME!
     exit 10
     do_sed $bind_from/etc/slim.conf \
         -e "s/^(\s#)*(default_user +).*/\2$def_user/" \
