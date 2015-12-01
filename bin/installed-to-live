@@ -629,7 +629,7 @@ munge_files() {
 }
 
 # Note: this code is no longer called/used.  We use fresh copies which
-# a lot of problems.  Although we will need to call it of the name of
+# a lot of problems.  Although we will need to call it if the name of
 # the default user changes.
 do_xorg_login() {
     exit 10
