@@ -126,7 +126,6 @@ Options:
     -w --work=<dir>            Temporary directory to hold our work: $WORK_DIR
 
     -v --verbose               Print more
-    -q --quiet                 Print less (cur
 
 Note: if passwords aren't given then the username is used as the password.
 
@@ -147,7 +146,7 @@ main() {
     [ $# -eq 0 ] && usage
 
     local param val
-    local short_stack="bdefFhoprtuvq"
+    local short_stack="bdefFhoprtuv"
     while [ $# -gt 0 -a -n "$1" -a -z "${1##-*}" ]; do
         param=${1#-}
         shift
@@ -185,7 +184,6 @@ main() {
              -output=*|o=*) OUTPUT_FILE=$val                  ;;
                  -output|o) OUTPUT_FILE=$val                  ;;
                 -pretend|p) PRETEND=true                      ;;
-                  -quiet|q) QUIET=true                        ;;
                -root=*|r=*) ROOT_PW=$val                      ;;
                    -root|r) ROOT_PW=$val                      ;;
            -template=*|t=*) TEMPLATE_DIR=$val                 ;;
