@@ -546,7 +546,7 @@ munge_files() {
     local template_dir=$1  bind_root=$2  work_dir=$3  user_pw=${4:-demo}  root_pw=${5:-root}
     local bind_from=$work_dir/bind
 
-    local def_user=${user_pw%%=*}
+    local def_user=${user_pw%%:*}
 
     local empty_dir=$work_dir/empty
     mkdir -p $empty_dir
