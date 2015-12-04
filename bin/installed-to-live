@@ -481,7 +481,7 @@ do_cleanup() {
 
     [ -z "$PRETEND" ] && is_mounted $BIND_ROOT &>/dev/null && fatal "Could not umount $BIND_DIR"
 
-    pretend rmdir $BIND_ROOT
+    test -d $BIND_ROOT && pretend rmdir $BIND_ROOT
 
     local file dir
     echo "$RM_FILES" | tr ',' '\n' | tac | while read file; do
