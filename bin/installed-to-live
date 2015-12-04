@@ -84,6 +84,8 @@ Commands:
 
     general-files       bind mount files under $TEMPLATE_DIR/general-files
 
+    read-only           Remount the bind root directory as read-only
+
     passwd              Make general purpose password/group files
 
     add=<dir1,dir2,..>  Add files from the dirs template
@@ -214,6 +216,7 @@ main() {
       general-files) do_general_files $CONF_FILE $WORK_DIR             ;;
             general) do_general       $CONF_FILE $WORK_DIR             ;;
              passwd) do_passwd        $CONF_FILE                       ;;
+          read-only) do_read_only     $CONF_FILE                       ;;
             cleanup) do_cleanup       $CONF_FILE $WORK_DIR             ;;
             empty=*) do_empty         $CONF_FILE $WORK_DIR "$val"      ;;
        version-file) do_version_file  $CONF_FILE $WORK_DIR             ;;
@@ -325,6 +328,16 @@ do_start() {
     fi
 
     write_conf_file $conf_file
+}
+
+do_read_only() {
+    local conf_file=$1  work_dir=$2  dirs=$3
+
+    read_conf_file $conf_file
+
+    is_mounted $BIND_ROOT &>/dev/null || fatal "read-only: $BIND_ROOT is not mounted"
+
+    mount -o remount,bind,ro $BIND_ROOT
 }
 
 do_add() {
