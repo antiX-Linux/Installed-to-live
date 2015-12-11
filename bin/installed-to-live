@@ -515,7 +515,7 @@ bind_mount_template() {
         is_mounted $targ && error "File $targ is already mounted"
         pretend mount --bind $file $targ
     done <<Bind_Template
-$(find $template_dir -type f)
+$(find $template_dir -type f -o -type l)
 Bind_Template
 }
 
