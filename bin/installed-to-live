@@ -52,6 +52,7 @@ LIVE_FILE_LIST="
 /etc/init.d/sendsigs
 /etc/issue
 /etc/rc.local
+/etc/rc?.d/*virtualbox*
 /etc/skel/.fluxbox/menu
 /etc/skel/.icewm/menu
 /etc/skel/.jwm/menu
