@@ -513,9 +513,26 @@ bind_mount_template() {
     while read file; do
         local base=${file#$template_dir}
         local targ=$bind_root$base
-        touch_file "$targ" "$real_root$base"
-        is_mounted $targ && error "File $targ is already mounted"
-        pretend mount --bind $file $targ
+        local orig=$real_root$base
+        if test -L "$file"; then
+            # Symlinks
+            test -e "$orig" && continue
+            pretend cp -a "$file" "$orig"
+
+            [ "$PRETEND" ] && continue
+
+            # Don't add broken links
+            if test -e $(readlink -f $orig); then
+                RM_FILES="$RM_FILES${RM_FILES:+,}$orig"
+            else
+                pretend rm -f $orig
+            fi
+        else
+            # Normal files
+            touch_file "$targ" "$orig"
+            is_mounted "$targ" && error "File $targ is already mounted"
+            pretend mount --bind "$file" "$targ"
+        fi
     done <<Bind_Template
 $(find $template_dir -type f -o -type l)
 Bind_Template
