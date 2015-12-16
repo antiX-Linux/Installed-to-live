@@ -22,7 +22,7 @@ ME=${0##*/}
 USER_PW=demo:demo
 ROOT_PW=root:root
 
-BIND_ROOT=/bind-root
+BIND_ROOT=/.bind-root
 REAL_ROOT=/
 WORK_DIR=/tmp/$ME
 
