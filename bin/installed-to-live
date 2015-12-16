@@ -96,6 +96,8 @@ Commands:
 
     general             Same as "all-files passwd"
 
+    adjtime             Reset the adjtime file but leave the utc / local selection
+
     cleanup             Clean up all that we did
 
     empty=<dir1,dir2,...>
@@ -223,6 +225,7 @@ main() {
             empty=*) do_empty         $CONF_FILE $WORK_DIR "$val"      ;;
        version-file) do_version_file  $CONF_FILE $WORK_DIR             ;;
      version-file=*) do_version_file  $CONF_FILE $WORK_DIR "$val"      ;;
+            adjtime) do_adjtime       $CONF_FILE $WORK_DIR             ;;
           exclude=*) do_exclude       "$val" "$@" ; exit 0             ;;
             exclude) do_exclude       ""     "$@" ; exit 0             ;;
 
@@ -417,6 +420,20 @@ do_status() {
     df -a | grep $BIND_ROOT | awk '{print $6}'
 
     exit 0
+}
+
+do_adjtime() {
+    local conf_file=$1  work_dir=$2
+    read_conf_file $conf_file
+    local orig=/etc/adjtime
+    test -r $orig || return 0
+
+    local template_dir=$work_dir/adjtime
+    local targ_file=$template_dir$orig_file
+    mkdir -p $(dirname $targ_file)
+    cp $orig $targ_file
+    sed -i -e "1 s/.*/0.0 0 0.0/" -e "2 s/.*/0/" $targ_file
+    bind_mount_template "$template_dir"  "$BIND_ROOT" "$REAL_ROOT"
 }
 
 do_passwd() {
