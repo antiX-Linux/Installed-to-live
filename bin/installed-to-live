@@ -425,13 +425,13 @@ do_status() {
 do_adjtime() {
     local conf_file=$1  work_dir=$2
     read_conf_file $conf_file
-    local orig=/etc/adjtime
-    test -r $orig || return 0
+    local orig_file=/etc/adjtime
+    test -r $orig_file || return 0
 
     local template_dir=$work_dir/adjtime
     local targ_file=$template_dir$orig_file
     mkdir -p $(dirname $targ_file)
-    cp $orig $targ_file
+    cp $orig_file $targ_file
     sed -i -e "1 s/.*/0.0 0 0.0/" -e "2 s/.*/0/" $targ_file
     bind_mount_template "$template_dir"  "$BIND_ROOT" "$REAL_ROOT"
 }
