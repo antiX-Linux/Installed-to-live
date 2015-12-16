@@ -491,11 +491,14 @@ do_cleanup() {
     local conf_file=$1  work_dir=$2
     read_conf_file $conf_file $FORCE
 
+    is_mounted $BIND_ROOT &>/dev/null && pretend umount --recursive $BIND_ROOT
+
     local i
     for i in $(seq 1 10); do
         is_mounted $BIND_ROOT &>/dev/null || break
         pretend umount --recursive $BIND_ROOT
         [ "$PRETEND" ] && break
+        sleep 0.1
     done
 
     [ -z "$PRETEND" ] && is_mounted $BIND_ROOT &>/dev/null && fatal "Could not umount $BIND_DIR"
