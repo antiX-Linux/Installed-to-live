@@ -408,7 +408,7 @@ do_status() {
     echo "$ME status:"
     if ! read_conf_file $conf_file force; then
         echo "  unstarted"
-        exit 1
+        exit 0
     fi
 
     echo "  started"
